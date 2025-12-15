@@ -25,7 +25,7 @@ function App() {
       children:[
         {index:true, element: <ProtectedRoute> <Home/> </ProtectedRoute>},
         {path:"profile", element: <ProtectedRoute> <Profile/> </ProtectedRoute>},
-        {path:"postdetalis/:id", element: <ProtectedRoute> <PostDetalis/> </ProtectedRoute>},
+        {path:"postdetails/:id", element: <ProtectedRoute> <PostDetalis/> </ProtectedRoute>},
         {path:"login", element: <Login/>},
         {path:"register", element:<Register/>},
         {path:"*", element:(
