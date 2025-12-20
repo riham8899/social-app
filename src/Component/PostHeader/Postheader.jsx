@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
-import  {jwtDecode} from 'jwt-decode'
-import React, {  useRef, useState } from 'react'
+import { jwtDecode } from 'jwt-decode'
+import React, { useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 
 
@@ -32,8 +32,9 @@ const Postheader = ({ userName, UserImg, CreateAt, UserPostId, PostId, body, pos
 
         }
     })
+    const [previewImg, setPreviewImg] = useState(postImg); // للعرض فقط
     const [upDateData, setUpDateData] = useState(body);
-    const [editImg, setEditImg] = useState("")
+    const [editImg, setEditImg] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
 
@@ -50,6 +51,7 @@ const Postheader = ({ userName, UserImg, CreateAt, UserPostId, PostId, body, pos
         if (editImg && editImg instanceof File) {
             formData.append("image", editImg);
         }
+
 
 
 
@@ -81,15 +83,19 @@ const Postheader = ({ userName, UserImg, CreateAt, UserPostId, PostId, body, pos
     function handelImg(e) {
         const file = e.target.files[0]
         if (file) {
-            setEditImg(file)
+            setEditImg(file);
+            setPreviewImg(URL.createObjectURL(file))
+
         }
 
     };
 
     function closeBtnImg() {
-        setEditImg(null)
+        setEditImg(null);
+        setPreviewImg(null);
 
-    }
+    };
+
     return (
         <div className="header">
             <div className='flex justify-between'>
@@ -110,13 +116,14 @@ const Postheader = ({ userName, UserImg, CreateAt, UserPostId, PostId, body, pos
                         <summary className="btn m-1  bg-slate-700 border-0"> <i className="fa-solid fa-ellipsis"></i></summary>
                         <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                             <li><button onClick={deletePost}>  {isPending ? <i className="fa-solid fa-spinner fa-spin text-light"></i> : "Delete"}</button></li>
-                            <li><button onClick={() =>{setEditImg(postImg); setIsModalOpen(true)}}>Update</button></li>
+                            <li><button onClick={() => { setEditImg(null); setPreviewImg(postImg); setIsModalOpen(true) }}>Update</button></li>
                         </ul>
                     </details>
 
                 </div>}
 
             </div>
+
 
             {isModalOpen && <dialog id="my_modal_3" open className="modal">
                 <div className="modal-box">
@@ -126,20 +133,25 @@ const Postheader = ({ userName, UserImg, CreateAt, UserPostId, PostId, body, pos
                     </form>
                     <h3 className="font-bold text-lg">Update Post</h3>
                     <textarea value={upDateData} placeholder="Typing" className="textarea textarea-primary w-full mt-3 h-25" onChange={(e) => setUpDateData(e.target.value)}></textarea>
-                    {editImg ? (<div className='py-3'>
+                    {previewImg ? (<div className='py-3'>
                         <i className="fa-solid fa-xmark cursor-pointer ms-auto block! mb-2" onClick={closeBtnImg}></i>
-                        <img src={editImg instanceof File ? URL.createObjectURL(editImg) : postImg} className='w-full' />
-                    </div>) : (<div class="flex items-center justify-center w-full py-3">
+                        <img src={previewImg} className='w-full' />
+                    </div>) : (<div className="flex items-center justify-center w-full py-3">
                         <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 bg-gray-800 border-primary border border-dashed border-default-strong rounded-base cursor-pointer hover:bg-neutral-tertiary-medium">
                             <div className="flex flex-col items-center justify-center text-body pt-5 pb-6">
                                 <svg className="w-8 h-8 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2" /></svg>
-                                <p className="mb-2 text-sm"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p className="mb-2 text-sm"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                 <p className="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                             </div>
                             <input id="dropzone-file" type="file" className="hidden" onChange={handelImg} />
                         </label>
                     </div>)}
-                    <button className='btn btn-primary mt-4' onClick={(e) => { e.preventDefault(); updateALLPost();  detailsRef.current.open=false;}} >  {editing ? <i className="fa-solid fa-spinner fa-spin text-light"></i> : "edate post"}</button>
+                    <button className='btn btn-primary mt-4' onClick={(e) => {
+                        e.preventDefault(); if (previewImg === null && !editImg) {
+                            toast.error("Image must be replaced");
+                            return;
+                        } updateALLPost(); detailsRef.current.open = false;
+                    }} >  {editing ? <i className="fa-solid fa-spinner fa-spin text-light"></i> : "edate post"}</button>
 
                 </div>
             </dialog>}
