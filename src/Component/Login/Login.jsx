@@ -91,7 +91,7 @@ const {insertUserToken} = useContext (authContext)
   });
   return (
     <section className='my-10 p-10 mx-auto w-1/2 shadow-2xl  shadow-blue-500 dark:shadow-white/20'>
-      <h1 className=' text-center text-bold text-4xl mb-4'>Login Bage</h1>
+      <h1 className=' text-center text-bold text-4xl mb-4'>Login Page</h1>
 
       <form onSubmit={handleSubmit(signup)}>
 

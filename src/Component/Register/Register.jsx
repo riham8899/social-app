@@ -111,7 +111,7 @@ export const Register = () => {
 
   return (
     <section className='my-10 p-10 mx-auto w-1/2 shadow-2xl  shadow-blue-500 dark:shadow-white/20'>
-      <h1 className=' text-center text-bold text-4xl'>Register Bage</h1>
+      <h1 className=' text-center text-bold text-4xl'>Register Page</h1>
 
       <form onSubmit={handleSubmit(signup)}>
         {/* input name  */}
